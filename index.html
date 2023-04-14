@@ -4,29 +4,26 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/style.css">
   <title>Document</title>
 </head>
 <body>
   <header>
     <h1>Quiz!</h1>
-    <a href="./scores.html">High Scores</a>
+    <h2 id="countDown">Time:</h2>
+    <h3 id="showScore">Last saved score</h3>
   </header>
 
   <main>
-    <div id="quiz">
-        <h2 id="countDown"></h2>
+    <div id="quiz">  
         <button id="startBtn">Start</button>
     </div>
 
-    <div id="endGame">
-      <h2>Game Over</h2>
-
-
       <form id="score">
-        <input>
+        <input id="input">
         <button>Save Score</button>
       </form>
-      
+
     </div>
   </main>
 
