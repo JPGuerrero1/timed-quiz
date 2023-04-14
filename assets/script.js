@@ -1,137 +1,122 @@
 var quizArea = document.getElementById("quiz");
 var startBtn = document.getElementById("startBtn");
 var countdown = document.getElementById("countDown");
+var checkmate = document.getElementById('endGame');
+var scoreBtn = document.getElementById('score');
+var clearInput = document.getElementById('input')
 
-var score;
+var score = clearInterval(timeLeft);
 
 var questions = [
   {
-    question: "1st question",
-    answerChoices: ["1st answer choice", "2nd", "3rd", "4th"],
-    correctAnswer: "2nd"
+    question: "What does HTML stand for?",
+    answerChoices: ["Hypertext Makeshift Language", "Hypertext Markup Language", "Have To Make Lunch", "He Took My Laptop"],
+    correctAnswer: "Hypertext Markup Language"
   },
   {
-    question: "2nd question",
-    answerChoices: ["1st answer choice", "2nd", "3rd", "4th"],
-    correctAnswer: "2nd"
+    question: "What does CSS stand for?",
+    answerChoices: ["Cascading Style Sheets", "Created Style Sheets", "Code Sheet Styling", "Cascading Sheet Styling"],
+    correctAnswer: "Cascading Style Sheets"
   },
   {
-    question: "3rd question",
-    answerChoices: ["1st answer choice", "2nd", "3rd", "4th"],
-    correctAnswer: "2nd"
+    question: "<h1>,<p>, and <section> are types of what?",
+    answerChoices: ["Selectors", "functions", "Variables", "Elements"],
+    correctAnswer: "Elements"
   },
   {
-    question: "4th question",
-    answerChoices: ["1st answer choice", "2nd", "3rd", "4th"],
-    correctAnswer: "2nd"
+    question: "A block of Javascript code that executes a task is known as a...?",
+    answerChoices: ["Function", "Anchor", "Margin", "Event"],
+    correctAnswer: "Function"
   },
   {
-    question: "5th question",
-    answerChoices: ["1st answer choice", "2nd", "3rd", "4th", "5"],
-    correctAnswer: "2nd"
+    question: "What is the output of: (5+5) === 10?",
+    answerChoices: ["True", "False"],
+    correctAnswer: "True"
   }
 ]
 
 var currentQuestion = 0;
+var timeLeft = 60;
 
 function startGame(event) {
   event.preventDefault();
-  // start the quiz!
-  // 1. Start timer
-  // 2. create a question
-  // 3. create answer choices
-  // 4. add event listeners to my answer choice buttons and that will validate whether they chose the right answer or not
-  // 5. move on to next question
-
-  // this function will start your timer
-  startTimer()
-  // this function will kick off rendering the question and answers to the page
+  quizArea.innerHTML = '';
+  startTimer();
   generateQuestion();
 }
 
 function startTimer() {
-    var timeLeft = 5;
+  var timeInterval = setInterval(function() {
 
-    var timeInterval = setInterval(function() {
-    if (timeLeft > 1) {
-      // Set the `textContent` of `timerEl` to show the remaining seconds
-      countdown.textContent = timeLeft;
-      // Decrement `timeLeft` by 1
+  if (currentQuestion === questions.length) {
+    countdown.textContent = 'Time: ' + timeLeft;
+    clearInterval(timeInterval)
+  };
+
+  if (timeLeft > 1) {
+    countdown.textContent = 'Time: ' + timeLeft + ' seconds';
+    timeLeft--;
+  } else if (timeLeft === 1) {
+      countdown.textContent = 'Time: ' + timeLeft + ' second';
       timeLeft--;
-    } else if (timeLeft === 1) {
-        // When `timeLeft` is equal to 1, rename to 'second' instead of 'seconds'
-        countdown.textContent = timeLeft;
-        timeLeft--;
-    } else {
-      // Once `timeLeft` gets to 0, set `timerEl` to an empty string
-      countdown.textContent = '';
-      // Use `clearInterval()` to stop the timer
-      clearInterval(timeInterval)
-      endGame()
-      // Call the `displayMessage()` function
-      // displayMessage();
-    }
-  }, 1000)
-}
+  } else {
+    countdown.textContent = 'Time: ';
+    clearInterval(timeInterval)
+    quizArea.innerHTML = '';
+    endGame()
+  }
+}, 1000)}
 
 function generateQuestion() {
-
-  // create an element (p, div)
-    
-  // write into that element using our question variable (textContent)
-  
-  // append that question element into our quiz area (appendChild)
-
-  // generateAnswerChoices
+  var question = questions[currentQuestion].question;
+  var prompt = document.createElement('h1');
+  prompt.textContent = question;
+  quizArea.append(prompt);
   generateAnswerChoices();
 }
 
 function generateAnswerChoices() {
-  // for loop i < questions[currentQuestion].answerChoices.length
-  // create an element (button)
+  answerSlot = document.createElement('div');
 
-  // write into that element using our answerChoices variable (textContent)
+  for (var i=0; i<questions[currentQuestion].answerChoices.length; i++) {
+    var choices = document.createElement('button');
+    choices.textContent=questions[currentQuestion].answerChoices[i];
 
-  // add event listener btn.addEventListener("click", validateAnswer)
-  
-  // append that question element into our quiz area (appendChild)
-
+    answerSlot.append(choices);
+    quizArea.append(answerSlot);  
+  }
+  answerSlot.addEventListener('click', validateAnswer);
 }
 
 function validateAnswer(event) {
   event.preventDefault();
-  // grab text of button that was clicked (event.target.textContent)
 
-  // conditional statement test userChoice === correctAnswer
-  // true
-  //    correct answer code
-  // false
-  //    incorrect answer
-  //    decrease timer by 10 secs
-  
-  // move onto the next question
+  var userChoice = event.target.textContent;
+  var correct = questions[currentQuestion].correctAnswer;
 
-  // currentQuestion++
-  // conditional statement to check if you've reached the end of the questions array if(currentQuestion === questions.length)
-  // end the game (call endGame())
-    endGame()
-  // reset quiz area (quizArea.innerHTML = "", loop using .removeChild())
+  if (userChoice === correct) {
+    quizArea.innerHTML = '';
+  } else {
+    quizArea.innerHTML = '';
+    timeLeft = timeLeft - 10;
+  }
 
-  // call generateQuestion again to start on the next question
-  generateQuestion();
+  currentQuestion++
+
+  if (currentQuestion !== questions.length) {
+    generateQuestion();
+  } else if (currentQuestion === questions.length) {
+    endGame();
+  }
 }
 
-
-
 function endGame() {
-  // end game whether it reaches the end of the quiz or time runs out
-  // display none quiz area and display end game div
-
-  // score
-  score = countdown;
-  // display score
-
-  // display high score
+  displayText = document.createElement('h2');
+  finalScore = document.createElement('p');
+  finalScore.textContent = 'Final score: ' + timeLeft;
+  displayText.textContent = 'Game Over!';
+  displayText.append(finalScore);
+  quizArea.append(displayText);
 }
 
 function saveScore(event) {
@@ -139,19 +124,30 @@ function saveScore(event) {
 
   var scoreObj = {
     intials: event.target.children[0].value,
-    score: countdown
+    score: timeLeft + 1
   }
-  // sets the score into local storage
+  
   localStorage.setItem("score", JSON.stringify(scoreObj));
+  clearInput.value = ''
 }
 
 function getScore() {
   // get high score out of localstorage
-  var score = JSON.parse(localStorage.getItem("score"))
-  // display to end game div
-  
+  var topScore = localStorage.getItem("score");
+
+  document.getElementById('showScore').value = topScore
+
+  var showScores = document.createElement('h2');
+
+  showScores.textContent = 'Score: ',topScore.initials, topScore.score + '/60'
+
+  showScores.append(topScore);
+  quizArea.append(showScores);
+
 }
 
 startBtn.addEventListener("click", startGame);
 
-//score.addEventListener("submit", saveScore)
+scoreBtn.addEventListener("submit", saveScore);
+
+showScore.addEventListener('click', getScore);
